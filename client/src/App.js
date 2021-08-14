@@ -1,12 +1,11 @@
 import { useEffect } from 'react'
-import {BrowserRouter as Router, Route} from 'react-router-dom'
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 
-import PageRender from './customRouter/PageRender'
-import PrivateRouter from './customRouter/PrivateRouter'
 
 import Home from './pages/home'
 import Login from './pages/login'
 import Register from './pages/register'
+import Message from './pages/message'
 
 import Alert from './components/alert/Alert'
 import Header from './components/header/Header'
@@ -22,6 +21,11 @@ import { GLOBALTYPES } from './redux/actions/globalTypes'
 import SocketClient from './SocketClient'
 
 import { getNotifies } from './redux/actions/notifyAction'
+import Post from './pages/post/Post'
+import Profile from './pages/profile/Profile'
+import Conversation from './pages/message/Conversation'
+import NotFound from './components/NotFound'
+import Discover from './pages/discover'
 
 function App() {
   const { auth, status, modal,} = useSelector(state => state)
@@ -68,13 +72,17 @@ function App() {
           {auth.token && <Header />}
           {status && <StatusModal />}
           {auth.token && <SocketClient />}
-          
-          <Route exact path="/" component={auth.token ? Home : Login} />
-          <Route exact path="/register" component={Register} />
-
-          <PrivateRouter exact path="/:page" component={PageRender} />
-          <PrivateRouter exact path="/:page/:id" component={PageRender} />
-          
+          <Switch>
+            <Route exact path="/" component={auth.token ? Home : Login} />
+            <Route exact path="/login" component={Login}/>
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/discover" component={auth.token ? Discover : Login} />
+            <Route exact path="/message" component={auth.token ? Message : Login } />
+            <Route exact path="/post/:id" component={auth.token ? Post : Login} />
+            <Route exact path="/profile/:id" component={auth.token ? Profile : Login } />
+            <Route exact path="/message/:id" component={auth.token ? Conversation : Login } />
+            <Route  component={NotFound} />
+          </Switch>
         </div>
       </div>
     </Router>
